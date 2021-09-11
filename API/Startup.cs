@@ -40,12 +40,16 @@ namespace API
             });
 
             services.AddControllers();
+        
             services.AddSwaggerGen(c =>
             {
 
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
 
             });
+
+                //Into our application and ordering dosent really matter inside here
+            services.AddCors();
             
         }
 
@@ -68,8 +72,12 @@ namespace API
             // the weather forecast endpoint and get to our forecast controller
             app.UseRouting();
 
-            //Which isnt doing much for us at the moment because we haven't configured any authorization
+            //Take some configuration
+            app.UseCors(policy => policy.AllowAnyHeader()// allow to any headers in policy, sending up headers such as authentication headers to our API from our angular application
+                                         .AllowAnyMethod()//allow in any method in policy,to allow put requset, post request, get request,etc.
+                                         .WithOrigins("http://localhost:4200"));//the origin that we want to route (specific origin) 
 
+            //Which isnt doing much for us at the moment because we haven't configured any authorization
             app.UseAuthorization();
 
             //We've got the middleware to actually use the endpoints and we've got a method
