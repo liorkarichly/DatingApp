@@ -75,7 +75,7 @@ namespace API
             //Take some configuration
             app.UseCors(policy => policy.AllowAnyHeader()// allow to any headers in policy, sending up headers such as authentication headers to our API from our angular application
                                          .AllowAnyMethod()//allow in any method in policy,to allow put requset, post request, get request,etc.
-                                         .WithOrigins("http://localhost:4200"));//the origin that we want to route (specific origin) 
+                                         .WithOrigins("https://localhost:4200"));//the origin that we want to route (specific origin) 
 
             //Which isnt doing much for us at the moment because we haven't configured any authorization
             app.UseAuthorization();
