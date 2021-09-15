@@ -13,6 +13,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using API.Data;
+using API.interfaces;
+using API.Services;
 
 
 namespace API
@@ -32,6 +34,7 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddScoped<ITokenService, TokenService>();
             services.AddDbContext<DataContext>(options => 
             {
 

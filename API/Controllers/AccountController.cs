@@ -60,6 +60,46 @@ namespace API.Controllers
              );
 
         }
+
+        [HttpPost("login")]
+        public async Task<ActionResult<AppUser>> Login(LoginDTOs loginDTOs){
+
+
+            var user = await r_DataContext
+                            .Users
+                            .SingleOrDefaultAsync(//Checking if we have the username in database and return the value
+                                userExists => 
+                                userExists.UserName 
+                                == loginDTOs.Username
+                                );
+
+            if(user == null)
+            {
+
+                return Unauthorized("Invalid username");
+            
+            }
+
+            //Checking if the password compueted to input password of user
+            using var hmac = new HMACSHA512(user.PasswordSalt);
+
+            var compuedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDTOs.Password));
+
+            for(int i = 0; i < compuedHash.Length; i++)
+            {
+
+                if(compuedHash[i] != user.PasswordHash[i])
+                {
+
+                    return Unauthorized("Invalid password");
+
+                }
+
+            } 
+
+            return user;
+
+        }
         
     }
 
