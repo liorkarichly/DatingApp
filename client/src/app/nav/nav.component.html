@@ -1,0 +1,39 @@
+<!-- Componet from boostrap -->
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Dating App</a>          
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                  <a class="nav-link " href="#">Matches</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Lists</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Messages</a>
+                </li>
+              </ul>
+                    <!--angular form                                  ngSubmit == form data, call from component of nav.component-->
+              <form loginForm="ngForm" class="form-inline mt-2 mt-md-0" (ngSubmit)="login()"
+               autocomplete="off">
+               <!-- We use in 2 way binding, we create snipet (name,a-ngModel ) -->
+                  <input
+                  name="username"
+                  [(ngModel)]="model.Username"
+                   class="form-control mr-sm-2"
+                    type="text"
+                    placeholder="Username">
+
+                  <input
+                  name="password"
+                  [(ngModel)]="model.Password"
+                   class="form-control mr-sm-2"
+                    type="password"
+                     placeholder="Password">
+                  <!-- When we click on button, inside some form tanks or when we press enter and the form call to login func-->
+                  <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Login</button>
+              </form>    
+          </div>
+    </div>
+  </nav>

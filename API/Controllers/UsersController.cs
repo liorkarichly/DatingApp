@@ -23,7 +23,6 @@ namespace API.Controllers
 
         }
 
-        
         //End point for list users, result to client
         //Async Task its make to call to database in synchornous
         [HttpGet]
@@ -39,7 +38,6 @@ namespace API.Controllers
             
         }
 
-      
         //api/users/3
         [Authorize]
         [HttpGet("{Id}")]
@@ -51,6 +49,6 @@ namespace API.Controllers
             
         }
 
-
     }
+
 }
