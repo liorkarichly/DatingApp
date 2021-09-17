@@ -18,6 +18,7 @@ using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
  using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using API.Extensions;
 
 
 namespace API
@@ -38,13 +39,7 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddScoped<ITokenService, TokenService>();
-            services.AddDbContext<DataContext>(options => 
-            {
-
-                    options.UseSqlite(r_Config.GetConnectionString("DefaultConnection"));
-
-            });
+           services.AddApplicationServices(r_Config);//Extentions method
 
             services.AddControllers();
         
@@ -55,24 +50,10 @@ namespace API
 
             });
 
-                //Into our application and ordering dosent really matter inside here
+            //Into our application and ordering dosent really matter inside here
             services.AddCors();
 
-            //Add middleware,
-            //First, add authentication             
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(
-                options => {
-
-                    options.TokenValidationParameters = new TokenValidationParameters{//Supply token validation 
-
-                        ValidateIssuerSigningKey = true,//validate the issue, assigning key and server is going to sign the token and we need to tell it to actully validated this token is correct.
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(r_Config["TokenKey"])),
-                        ValidateIssuer = false,//Flag , validate the issuer, token is obviously our API server  
-                        ValidateAudience = false// Flag, validate the audience, token is our angular application
-                    };
-                }
-            );
+           services.AddIdentityServices(r_Config);//Extentions method
             
         }
 
