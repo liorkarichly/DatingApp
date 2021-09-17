@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using API.DTOs;
 using Microsoft.EntityFrameworkCore;
+using API.interfaces;
 
 namespace API.Controllers
 {
@@ -13,16 +14,18 @@ namespace API.Controllers
     {
         
         private readonly DataContext r_DataContext;
+        private readonly ITokenService r_TokenServiceInterface;
 
-        public AccountController(DataContext i_DataContext)
+        public AccountController(DataContext i_DataContext, ITokenService i_Token)
         {
             
             r_DataContext = i_DataContext;
+            r_TokenServiceInterface = i_Token;
 
         }
 
         [HttpPost("register")]//automatically binds to any parameter that it finds in the parameters of our method here
-        public async Task<ActionResult<AppUser>> Register(RegisterDTOs registerDTOs)
+        public async Task<ActionResult<UsersDTOs>> Register(RegisterDTOs registerDTOs)
         {
 
                 //return status 404 code 
@@ -47,7 +50,13 @@ namespace API.Controllers
         r_DataContext.Users.Add(user);
         await r_DataContext.SaveChangesAsync();
       
-        return user;
+        return new UsersDTOs
+        {
+
+            Username = user.UserName,
+            Token = r_TokenServiceInterface.CreateToken(user)
+            
+        };
 
         }
  
@@ -62,7 +71,7 @@ namespace API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<AppUser>> Login(LoginDTOs loginDTOs){
+        public async Task<ActionResult<UsersDTOs>> Login(LoginDTOs loginDTOs){
 
 
             var user = await r_DataContext
@@ -97,7 +106,13 @@ namespace API.Controllers
 
             } 
 
-            return user;
+             return new UsersDTOs
+                {
+
+                Username = user.UserName,
+                Token = r_TokenServiceInterface.CreateToken(user)
+            
+                };
 
         }
         

@@ -5,6 +5,7 @@ using API.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -26,6 +27,7 @@ namespace API.Controllers
         //End point for list users, result to client
         //Async Task its make to call to database in synchornous
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
 
@@ -37,8 +39,9 @@ namespace API.Controllers
             
         }
 
-        
+      
         //api/users/3
+        [Authorize]
         [HttpGet("{Id}")]
         public async Task<ActionResult<AppUser>> GetUsers(int Id)///Endpoint for specifics parameter
         {
