@@ -40,6 +40,7 @@ currentUser$ = this.currentUserSource.asObservable(); //$ sign the object is obs
           this.currentUserSource.next(user);//Current user, how to set the next value 
         }
 
+        //return user; for to print in consol 
       })
 
     );
@@ -60,6 +61,22 @@ currentUser$ = this.currentUserSource.asObservable(); //$ sign the object is obs
     localStorage.removeItem('user');
     this.currentUserSource.next(null);
 
+  }
+
+  register(model:any){
+
+    return this.http.post(this.baseUrl + 'account/register' , model).pipe(
+      map((user: User) => {//We casting because, the map get object and it didnt know that he get User object, any for get around for any problem 
+
+          if(user)
+          {
+
+            localStorage.setItem('user', JSON.stringify(user));
+            this.currentUserSource.next(user);
+
+          }
+        })
+    )
   }
 
 }

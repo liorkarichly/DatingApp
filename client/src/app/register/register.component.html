@@ -6,14 +6,15 @@
          [(ngModel)]="model.username" placeholder="Username">    
     </div>
 
+    <!-- Pass data from parent to child
     <div class="form-group">
            <label >What is your favourite user?</label>
            <select class="form-control"><!--Cube for select item-->
-           <option *ngFor="let user of usersFromHomeComponent" [value]="user.userName">
-               {{user.userName}}
-           </option><!--option from loop-->
-        </select>
-    </div>
+           <!-- <option *ngFor="let user of usersFromHomeComponent" [value]="user.userName"> -->
+               <!-- {{user.userName}} -->
+           <!-- </option>option from loop -->
+        <!-- </select> -->
+    <!-- </div>  -->
 
     <div class="form-group">
         <input type="password" class="form-control" name="password"

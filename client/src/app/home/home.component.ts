@@ -8,11 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 registerMode = false;
-users:any={};
-  constructor(private http:HttpClient) { }
+
+  constructor() { }
 
   ngOnInit(): void {
-    this.getUsers();
   }
 
   registerToggle(){
@@ -20,9 +19,12 @@ users:any={};
     this.registerMode = !this.registerMode;
   }
 
-  getUsers(){
+  cancelRegisterMode(event: boolean)
+  {
 
-    this.http.get('https://localhost:5001/api/users').subscribe(users => this.users = users)
-                                                                //response
+    //We sending the event in boolean because the function in cancel register, the emit is false 
+    this.registerMode = event;
+    //Passing data from child to parent
+
   }
 }
