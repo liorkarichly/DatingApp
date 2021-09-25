@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastrModule } from 'ngx-toastr';
 
 
 
@@ -16,7 +16,7 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
   ],
   exports:[
     BsDropdownModule,
-    ToastrService,
+    ToastrModule
   ]
 })
 export class SharedModule { }
