@@ -9,6 +9,7 @@ namespace API.DTOs
         public string Username { get; set; }
 
          [Required]
+         [StringLength(10,MinimumLength = 6)]//Maximum and Mininum 
         public string Password { get; set; }
 
     }

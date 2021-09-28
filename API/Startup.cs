@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
  using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using API.Extensions;
+using API.Middleware;
 
 
 namespace API
@@ -61,13 +62,16 @@ namespace API
         {
 
             //Checking if were in development mode and if we are and our application encounters a problem
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
-            }
-
+            //Its show in top of scope because if an exception happens anywhere wlse in the middle where or as part of our request 
+            // if (env.IsDevelopment())
+            // {
+            //     app.UseDeveloperExceptionPage();
+            //     app.UseSwagger();
+            //     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
+            // }
+            
+            app.UseMiddleware<ExceptionMiddleware>();
+            
             //If we did come in on a HTTP address, then we get redirected to the HTTPS endpoints
             app.UseHttpsRedirection();
 

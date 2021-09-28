@@ -47,16 +47,16 @@ namespace API.Controllers
 
             };
 
-        r_DataContext.Users.Add(user);
-        await r_DataContext.SaveChangesAsync();
+                r_DataContext.Users.Add(user);
+                await r_DataContext.SaveChangesAsync();
       
-        return new UsersDTOs
-        {
+            return new UsersDTOs
+            {
 
-            Username = user.UserName,
-            Token = r_TokenServiceInterface.CreateToken(user)
+                Username = user.UserName,
+                Token = r_TokenServiceInterface.CreateToken(user)
             
-        };
+            };
 
         }
  
