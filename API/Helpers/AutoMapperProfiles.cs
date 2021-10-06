@@ -17,7 +17,9 @@ namespace API.Helpers
                 , options => options.MapFrom(
                               source => source.Photos.FirstOrDefault(
                                                         mainPhoto => mainPhoto.IsMain).Url)
-            );//Which property that we want to affect 
+            )
+            .ForMember(destination => destination.Age, 
+                    optional => optional.MapFrom(source => source.DateOfBirth.CalculatorAge()));//Which property that we want to affect 
 
             CreateMap<Photo, PhotoDTOs>();
           

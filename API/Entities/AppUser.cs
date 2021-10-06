@@ -38,11 +38,12 @@ namespace API.Entities
 
             public ICollection<Photo> Photos { get; set; }
             
+            //We implement in AutoMapperProfiles in ForMember
+            // public int GetAge(){
 
-            public int GetAge(){
+            //     return DateOfBirth.CalculatorAge();
+            // }
 
-                return DateOfBirth.CalculatorAge();
-            }
     }
 
 }

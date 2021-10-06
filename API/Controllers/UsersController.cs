@@ -47,11 +47,13 @@ namespace API.Controllers
             //return r_DataContext.Users.ToListAsync().result; -- not after that  Ok(await r_UserRepository.GetUsersAsync()); its version better
 
 
-            var users = await r_UserRepository.GetUsersAsync();
-            var usersToReturn = r_Mapper.Map<IEnumerable<MemberDTOs>>(users);
-                                                           //TO
+            // var users = await r_UserRepository.GetUsersAsync();
+            // var usersToReturn = r_Mapper.Map<IEnumerable<MemberDTOs>>(users);
+            //                                                //TO
 
-            return Ok(usersToReturn);
+
+                var users = await r_UserRepository.GetMembersAsync();
+            return Ok(users);
         }
 
         // //api/users/3
@@ -73,8 +75,9 @@ namespace API.Controllers
             ///Return the user by id , if is exists in database
             //return await r_UserRepository.GetUserByUsernameAsync(username);
 
-            var user = await r_UserRepository.GetUserByUsernameAsync(username);
-            return r_Mapper.Map<MemberDTOs>(user);
+            return await r_UserRepository.GetMemberAsync(username);//Go and get the user 
+            ///return r_Mapper.Map<MemberDTOs>(user);//Search the user and convert him to memberDTO
+            ///We return from GetMemberAsync now!
         }
         //I remove the [Authorize] and [AllowAnonymous] because that i want to make to user 
         // to get the other users when they authentacion
