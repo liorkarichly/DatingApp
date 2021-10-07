@@ -1,1 +1,5 @@
-<p>member-list works!</p>
+ <div class="row"><!--display list members -->
+    <div *ngFor="let member of members" class="col-2"><!--display column and amount-->
+        <app-member-card [member]="member"></app-member-card><!--Child card-->
+    </div>
+</div>

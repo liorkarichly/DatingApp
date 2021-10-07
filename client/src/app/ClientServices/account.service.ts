@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
 import {map} from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 import { User } from '../_models/user';
 
 /**
@@ -14,9 +15,10 @@ import { User } from '../_models/user';
 export class AccountService {
   
   //The service does't get destroyed until our application is closed. 
-baseUrl = 'https://localhost:5001/api/'; //Base URL Property, Make Request To Our API
+//baseUrl = 'https://localhost:5001/api/'; //Base URL Property, Make Request To Our API
 //baseUrl:TYPE
 //baseUrl= SET 
+baseUrl = environment.apiUrl;
 private currentUserSource = new ReplaySubject<User>(1);//kind of like a buffer object is going to store the values inside,ReplaySubject<User>(1) <Type>(Amount - Size in buffer) 
 currentUser$ = this.currentUserSource.asObservable(); //$ sign the object is observable
 
