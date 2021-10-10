@@ -22,6 +22,7 @@ namespace API.Helpers
                     optional => optional.MapFrom(source => source.DateOfBirth.CalculatorAge()));//Which property that we want to affect 
 
             CreateMap<Photo, PhotoDTOs>();
+            CreateMap<MemberUpdateDTOs, AppUser>();
           
         }
 

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using API.interfaces;
 using API.DTOs;
 using AutoMapper;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -81,6 +82,29 @@ namespace API.Controllers
         }
         //I remove the [Authorize] and [AllowAnonymous] because that i want to make to user 
         // to get the other users when they authentacion
+
+/*--------------------------------------------------------*/
+        [HttpPut]
+        public async Task<ActionResult> UpadteUser(MemberUpdateDTOs memberUpdateDTOs){
+
+            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;//Take the username by the token that use in authenticate 
+            var user = await r_UserRepository.GetUserByUsernameAsync(username);
+
+            r_Mapper.Map(memberUpdateDTOs, user);
+
+            r_UserRepository.Update(user);
+
+            if (await r_UserRepository.SaveAllAsAsync())
+            {
+
+                return NoContent();
+
+            }
+
+            return BadRequest("Failed to update user");
+        
+        }
+
     }
 
 }

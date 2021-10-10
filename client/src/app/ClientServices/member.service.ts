@@ -1,5 +1,8 @@
 import { HttpClient } from '@angular/common/http';
+import { ThrowStmt } from '@angular/compiler';
 import { Injectable } from '@angular/core';
+import { of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Member } from '../_models/member';
 
@@ -16,6 +19,7 @@ import { Member } from '../_models/member';
 })
 export class MemberService {
 baseUrl = environment.apiUrl;
+members: Member[] = [];
 
   constructor(private http:HttpClient) { }
 
@@ -23,16 +27,46 @@ baseUrl = environment.apiUrl;
   getMembers()
   {
 
+    if(this.members.length > 0)//We want to return as an Observable because the member get for see him 
+    {
+
+      return of(this.members);// as a map method
+    }
     //Get return Observable<Object>
-    return this.http.get<Member[]>(this.baseUrl + 'users');
+    return this.http.get<Member[]>(this.baseUrl + 'users').pipe(
+      map(members =>{
+        this.members = members
+        return this.members;
+      })
+    );
 
   }
 
   getMember(username: string)
   {
 
+    const member = this.members.find(currentUsername => currentUsername.username === username);
+
+    if(member !== undefined)
+    {
+
+      return of(member);
+
+    }
     return this.http.get<Member>(this.baseUrl + 'users/' + username);
   
   }
   
+  updateMemeber(member:Member){
+
+    return this.http.put(this.baseUrl + 'users', member).pipe(
+      map(() => 
+      {
+        const index = this.members.indexOf(member);//Find the index of member
+        this.members[index] = member;//Update member
+      })
+    )
+   
+
+  }
 }
