@@ -7,6 +7,7 @@ using System.Text;
 using API.DTOs;
 using Microsoft.EntityFrameworkCore;
 using API.interfaces;
+using System.Linq;
 
 namespace API.Controllers
 {
@@ -76,6 +77,7 @@ namespace API.Controllers
 
             var user = await r_DataContext
                             .Users
+                            .Include(photo => photo.Photos)
                             .SingleOrDefaultAsync(//Checking if we have the username in database and return the value
                                 userExists => 
                                 userExists.UserName 
@@ -110,7 +112,8 @@ namespace API.Controllers
                 {
 
                 Username = user.UserName,
-                Token = r_TokenServiceInterface.CreateToken(user)
+                Token = r_TokenServiceInterface.CreateToken(user),
+                PhotoUrl = user.Photos.FirstOrDefault(photoIsMain => photoIsMain.IsMain)?.Url
             
                 };
 

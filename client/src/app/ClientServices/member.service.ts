@@ -1,5 +1,4 @@
 import { HttpClient } from '@angular/common/http';
-import { ThrowStmt } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -66,7 +65,22 @@ members: Member[] = [];
         this.members[index] = member;//Update member
       })
     )
-   
+     
 
+  }
+
+  setMainPhoto(photoId: number)
+  {
+
+      //We 'put' something to user so we need to get back something, and we dont get back anything
+      return this.http.put(this.baseUrl + 'users/set-main-photo/' + photoId, {});
+    
+  }
+
+  deletePhoto(photoId:number)
+  {
+
+    return this.http.delete(this.baseUrl + 'users/delete-photo/' + photoId);
+    
   }
 }

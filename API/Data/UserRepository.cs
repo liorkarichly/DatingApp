@@ -65,8 +65,8 @@ namespace API.Data
             return await r_Context.Users
                     .Include(photosUser => photosUser.Photos)//Include photos of user
                     .SingleOrDefaultAsync(
-                        user => user.UserName == username.ToLower()//Return by username
-            );
+                        user => user.UserName == username);//Return by username
+            
 
             // .Include - //Take related collection, ,include with our response but its make a problme beacuse its do a cycle exceptions
             // When we allow to photo object so we have them ApppUser object and it access them

@@ -14,10 +14,10 @@ import { User } from 'src/app/_models/user';
 })
 export class MemberEditComponent implements OnInit {
 
-  @ViewChild('editForm') editForm:NgForm;//Specify the child selected that we're looking for
-member:Member;//Getting the username from members
-user:User;//I want to get the username spesific
-@HostListener('window:beforeunload', ['$event']) unloadNotification($event: any)
+@ViewChild('editForm') editForm: NgForm;//Specify the child selected that we're looking for
+member: Member;//Getting the username from members
+user: User;//I want to get the username spesific
+@HostListener('window:beforeunload', ['$event']) unloadNotification($event: any)//Lisitner to operation on the page and Angular upload the element
 {
  
   if(this.editForm.dirty)
@@ -54,7 +54,7 @@ user:User;//I want to get the username spesific
 
   updateMember()
   {
-
+      console.log("I inside");
     this.memberService.updateMemeber(this.member) 
       .subscribe(() =>
       {

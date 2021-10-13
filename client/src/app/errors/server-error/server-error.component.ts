@@ -19,6 +19,7 @@ error:any;
     const navigation = this.router.getCurrentNavigation();//Stop get navigation
     this.error = navigation?.extras?.state?.error;//Serial checking of navigation because whem the 
     //user is refresh so he lose information (error)
+    
   }
 
   ngOnInit(): void {

@@ -14,5 +14,6 @@ namespace API.Errors
         public int StatusCode { get; set; }
         public string Messages { get; set; }
         public string Details { get; set; }
+        
     }
 }

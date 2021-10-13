@@ -37,9 +37,11 @@ currentUser$ = this.currentUserSource.asObservable(); //$ sign the object is obs
         if (user)//Check if we have user or not
         {
           // Populate the object(user) in local storage of the browser
-          localStorage.setItem('user', JSON.stringify(user));
-                              //key     //take object that back
-          this.currentUserSource.next(user);//Current user, how to set the next value 
+          // localStorage.setItem('user', JSON.stringify(user));
+          //                     //key     //take object that back
+          // this.currentUserSource.next(user);//Current user, how to set the next value 
+
+          this.setCurrentUser(user);
         }
 
         //return user; for to print in consol 
@@ -51,6 +53,8 @@ currentUser$ = this.currentUserSource.asObservable(); //$ sign the object is obs
 
   setCurrentUser(user:User)
   {
+
+    localStorage.setItem('user', JSON.stringify(user));
 
     this.currentUserSource.next(user);
 
@@ -73,8 +77,7 @@ currentUser$ = this.currentUserSource.asObservable(); //$ sign the object is obs
           if(user)
           {
 
-            localStorage.setItem('user', JSON.stringify(user));
-            this.currentUserSource.next(user);
+           this.setCurrentUser(user);
 
           }
         })

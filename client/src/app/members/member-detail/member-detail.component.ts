@@ -32,8 +32,10 @@ galleryImages: NgxGalleryImage[];
 
   }
 
+  //Return array gallery of member
   getImages():NgxGalleryImage[]
   {
+
     const imageUrls =[];
     for(const photo of this.member.photos){
       imageUrls.push(
@@ -46,10 +48,12 @@ galleryImages: NgxGalleryImage[];
     }
 
     return imageUrls;
+
   }
 
 loadMember()
 {
+  
                                   //insert to route 'member/username'
   this.memberService.getMember(this.route.snapshot.paramMap.get('username'))
                               .subscribe(member => 

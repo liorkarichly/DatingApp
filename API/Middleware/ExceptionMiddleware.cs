@@ -39,12 +39,13 @@ namespace API.Middleware
 
                     await m_Next(context);//RequestDelegate -> TYPE: 'public delegate Task RequestDelegate(HttpContext context);'
 
-                }catch(Exception ex)
+                }
+                catch(Exception ex)
                 {
 
                     m_Logger.LogError(ex, ex.Message);//This is not the best solution because we cant see any details
-                    context.Response.ContentType = "applecation/json";
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    context.Response.ContentType = "applecation/json";//Format
+                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;//Status code
 
                     //Create response
                     var response = m_Environment.IsDevelopment()
