@@ -19,6 +19,7 @@ namespace API.Extensions
             //Operation only in scope
             i_Services.AddScoped<ITokenService, TokenService>();
             i_Services.AddScoped<IPhotoService, PhotoService>();
+            i_Services.AddScoped<LogUserActivity>();
             i_Services.AddScoped<IUserRepository, UserRepository>();//Add service of user repository, and make to access to use it
             i_Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);//WE need to tell about the other project by the Assembly
          

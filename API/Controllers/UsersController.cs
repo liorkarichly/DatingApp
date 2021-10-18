@@ -8,6 +8,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using API.Extensions;
 using System.Linq;
+using API.Helpers;
 
 namespace API.Controllers
 {
@@ -38,7 +39,7 @@ namespace API.Controllers
         //Async Task its make to call to database in synchornous
         // [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MemberDTOs>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<MemberDTOs>>> GetUsers([FromQuery] UserParams userParams)
         {
 
             //Ok() magically formats it to a  OkResult and OkResult inherits from ActionResult.
@@ -53,9 +54,24 @@ namespace API.Controllers
             // var usersToReturn = r_Mapper.Map<IEnumerable<MemberDTOs>>(users);
             //                                                //TO
 
+            var currentUser = await r_UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            userParams.CurrentUsername =  currentUser.UserName;
 
-                var users = await r_UserRepository.GetMembersAsync();
+            if(string.IsNullOrEmpty(userParams.Gender))
+            {
+
+                userParams.Gender = currentUser.Gender == "female" ? "male" : "female";
+            
+            }
+
+             //   var users = await r_UserRepository.GetMembersAsync();
+             var users = await r_UserRepository.GetMembersAsync(userParams);
+
+             Response.AddPaginationHeader(users.CurrentPage, users.PageSize
+                                    , users.TotalCount, users.TotalPages);
+
             return Ok(users);
+            
         }
 
         // //api/users/3

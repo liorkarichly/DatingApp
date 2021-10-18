@@ -41,7 +41,8 @@ namespace API.Services
                            
                             //When we used in our user name so its going to name identifier.
                             //We using in our username and store to inside
-                    new Claim(JwtRegisteredClaimNames.NameId, user.UserName)
+                    new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
+                     new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName)
 
             };
 
