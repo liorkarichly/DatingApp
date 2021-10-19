@@ -11,14 +11,14 @@ namespace API.Data.Migrations
                 columns: table => new
                 {
                     SourceUserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    LikeUserId = table.Column<int>(type: "INTEGER", nullable: false)
+                    LikedUserId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Likes", x => new { x.SourceUserId, x.LikeUserId });
+                    table.PrimaryKey("PK_Likes", x => new { x.SourceUserId, x.LikedUserId });
                     table.ForeignKey(
-                        name: "FK_Likes_Users_LikeUserId",
-                        column: x => x.LikeUserId,
+                        name: "FK_Likes_Users_LikedUserId",
+                        column: x => x.LikedUserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -31,9 +31,9 @@ namespace API.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Likes_LikeUserId",
+                name: "IX_Likes_LikedUserId",
                 table: "Likes",
-                column: "LikeUserId");
+                column: "LikedUserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
