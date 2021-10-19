@@ -63,7 +63,7 @@ namespace API.Controllers
         public ActionResult<string> GetBadRequest()//The purpose of this is to return gets that is not was good GET from user, when i sending bad request that we dont know what i do with this so we sending back the bad request too that the user knowledge that its was bad request
         {
 
-             return BadRequest("This is not good request");
+             return BadRequest();
 
         }
         

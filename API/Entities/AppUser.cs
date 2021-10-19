@@ -37,6 +37,10 @@ namespace API.Entities
             public string Country { get; set; }
 
             public ICollection<Photo> Photos { get; set; }
+
+            public ICollection<UserLike> LikedByUsers { get; set; }//Users did liked
+
+            public ICollection<UserLike> LikedUsers { get; set; }//Liked to our user
             
             //We implement in AutoMapperProfiles in ForMember
             // public int GetAge(){

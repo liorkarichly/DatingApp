@@ -56,19 +56,25 @@ export class ErrorInterceptor implements HttpInterceptor {
                 throw modalStateErrors.flat();//flat - version from 2019: flatten array
                                 
               }
+              else if(typeof(error.error) === 'object')
+              {
+
+                this.toasts.error(error.statusText, error.status);
+              
+              }
               else
               {
 
-                this.toasts.error(error.statusText === 'OK' ? 'Bad Request' : error.statusText, error.status);
-              
+                this.toasts.error(error.error, error.status);
+
               }
 
             break;
             
             case 401:
 
-                this.toasts.error(error.statusText === 'OK' ? 'Unauthorised' : error.statusText, error.status);
-            break;
+              this.toasts.error(error.statusText, error.status);
+              break;
 
             case 404:
 
