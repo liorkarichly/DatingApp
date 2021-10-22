@@ -42,6 +42,10 @@ namespace API.Entities
 
             public ICollection<UserLike> LikedUsers { get; set; }//Liked to our user
             
+            public ICollection<Message> MessagesSent { get; set; }
+            
+            public ICollection<Message> MessagesReceived { get; set; }
+
             //We implement in AutoMapperProfiles in ForMember
             // public int GetAge(){
 

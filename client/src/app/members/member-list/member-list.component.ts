@@ -33,7 +33,7 @@ genderList = [{value: 'male', display: 'Males'}, {value: 'female', display: 'Fem
     //     this.userParams = new userParames(user);
     //   });
 
-    this.userParams = this.memberService.getUserPararms();
+    this.userParams = this.memberService.getUserPararms();// I dont want to lost the my filter when i insert to profile of member and when ill back to list' ill stay with the same filter 
    }
 
   ngOnInit(): void 
@@ -53,6 +53,7 @@ genderList = [{value: 'male', display: 'Males'}, {value: 'female', display: 'Fem
 
   // }
 
+  //Call to members per page
   loadMembers()
   {
 
@@ -64,6 +65,7 @@ genderList = [{value: 'male', display: 'Males'}, {value: 'female', display: 'Fem
     })
   }
 
+  //Next page
   pageChanged(event: any)
   {
 
@@ -73,6 +75,7 @@ genderList = [{value: 'male', display: 'Males'}, {value: 'female', display: 'Fem
     
   }
 
+  //Initialize agian of list members
   resetFilters()
   {
 

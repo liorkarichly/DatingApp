@@ -16,13 +16,13 @@ namespace API.Data
     {
 
         private readonly DataContext r_Context;
-        private readonly IMapper r_mapper;
+        private readonly IMapper r_Mapper;
 
         //Repository injection to database
-        public UserRepository(DataContext i_Context, IMapper i_mapper)
+        public UserRepository(DataContext i_Context, IMapper i_Mapper)
         {
-            r_mapper = i_mapper;
 
+            r_Mapper = i_Mapper;
             r_Context = i_Context;
 
         }
@@ -32,7 +32,7 @@ namespace API.Data
 
             return await r_Context.Users.Where(//We show in termnial the property of AppUser
                 member => member.UserName == username)
-            .ProjectTo<MemberDTOs>(r_mapper.ConfigurationProvider)//Set configuration file for to provide our alternative profile, we need to provider the our configuration that the mapper known to access    
+            .ProjectTo<MemberDTOs>(r_Mapper.ConfigurationProvider)//Set configuration file for to provide our alternative profile, we need to provider the our configuration that the mapper known to access    
             .SingleOrDefaultAsync();//execute query
 
         }
@@ -63,16 +63,16 @@ namespace API.Data
             query = query.Where(userAge => userAge.DateOfBirth >= minDateOfBirth
                                 && userAge.DateOfBirth <= maxDateOfBirth);
 
-            query =  userParams.OrederBy switch{
+            query =  userParams.OrederBy switch{//switch exspression (version 8.0+)
 
                 "created" =>  query.OrderByDescending(userCreate => userCreate.Created),
                 /*Default*/_ => query.OrderByDescending(userLastActive => userLastActive.LastActive)
            
             };
-
+                                //Still send query but first we do filter and still not executing anything inside this method because that's still being taken care of inside
             return await PagedList<MemberDTOs>.CreateAsync(query
-                                                         .ProjectTo<MemberDTOs>(r_mapper.ConfigurationProvider) 
-                                                         .AsNoTracking()
+                                                         .ProjectTo<MemberDTOs>(r_Mapper.ConfigurationProvider) 
+                                                         .AsNoTracking()//We're not going to do anything with these entities.
                                                          , userParams.PageNumber
                                                          , userParams.PageSize);
             
@@ -98,7 +98,7 @@ namespace API.Data
             return await r_Context.Users
                     .Include(photosUser => photosUser.Photos)//Include photos of user
                     .SingleOrDefaultAsync(
-                        user => user.UserName == username);//Return by username
+                        user => user.UserName == username);//Return by username, execute query
             
 
             // .Include - //Take related collection, ,include with our response but its make a problme beacuse its do a cycle exceptions

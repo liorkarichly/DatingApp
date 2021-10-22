@@ -63,7 +63,7 @@ namespace API.Controllers
 
                 Username = user.UserName,
                 Token = r_TokenServiceInterface.CreateToken(user),
-                PhotoUrl = user.Photos.FirstOrDefault(photoIsMain => photoIsMain.IsMain)?.Url,
+                //PhotoUrl = user.Photos.FirstOrDefault(photoIsMain => photoIsMain.IsMain)?.Url,
                 KnownAs = user.KnownAs,
                 Gender = user.Gender
 
@@ -84,8 +84,7 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UsersDTOs>> Login(LoginDTOs loginDTOs)
         {
-
-
+            
             var user = await r_DataContext
                             .Users
                             .Include(photo => photo.Photos)

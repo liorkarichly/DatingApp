@@ -18,6 +18,9 @@ namespace API.Data
         //Create table of likes
         public DbSet<UserLike> Likes { get; set; }
 
+        //Create table of Messages
+        public DbSet<Message> Messages { get; set; }
+
         //Gives to entities some configuration, create relationships many to many
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -50,7 +53,19 @@ namespace API.Data
                 .WithMany(iLikeHim => iLikeHim.LikedByUsers)//Like many, key
                 .HasForeignKey(sourceKey => sourceKey.LikedUserId)//Set source id
                 .OnDelete(DeleteBehavior.Cascade);//If we delete user so we delete the related users
+
+
+                modelBuilder.Entity<Message>()
+                    .HasOne(user => user.Recipient)//One recipient
+                    .WithMany(member => member.MessagesReceived)//Collection of recipient
+                    .OnDelete(DeleteBehavior.Restrict);//We don't want to remove the messages if the other party.
+                                                        //Hasn't deleted them themselves.
         
+                modelBuilder.Entity<Message>()
+                    .HasOne(user => user.Sender)//One sender
+                    .WithMany(member => member.MessagesSent)//Collection of sent
+                    .OnDelete(DeleteBehavior.Restrict);
+
         }
         
     }

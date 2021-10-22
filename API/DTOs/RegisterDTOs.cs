@@ -19,7 +19,7 @@ namespace API.DTOs
         [Required] public string Country { get; set; }
 
         [Required]
-        [StringLength(10,MinimumLength = 6)]//Maximum and Mininum 
+        [StringLength(10,MinimumLength = 6)]//Maximum , Mininum 
         public string Password { get; set; }
 
     }

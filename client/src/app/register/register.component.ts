@@ -21,7 +21,7 @@ export class RegisterComponent implements OnInit {
 //FormBuilder - Called the form builder service and will inject the form builder inside here.
   constructor(private accountService: AccountService
             , private toastr: ToastrService
-            ,private formBuilder: FormBuilder
+            ,private formBuilder: FormBuilder//Create AbstractControl, Create Syntax that shortens creating instans FormGroup, FormControl
             ,private router: Router) { }
 
   ngOnInit(): void {
@@ -86,9 +86,10 @@ export class RegisterComponent implements OnInit {
     //Options 2
       this.registerForm = this.formBuilder.group(
       {
+        //this validator only goes one way
 
         username: ['', Validators.required],
-        gender: ['male'],//Button chose
+        gender: ['male'],//Button chose, default
         knownAs: ['', Validators.required],
         dateOfBirth: ['', Validators.required],
         city: ['', Validators.required],
@@ -99,15 +100,20 @@ export class RegisterComponent implements OnInit {
       }
 
     );
+      // the validator on the confirmPassword field again when the password field is updated. 
+    this.registerForm.controls.password.valueChanges.subscribe(() => {
+      this.registerForm.controls.confirmPassword.updateValueAndValidity();
+    });
 
   }
 
   matchValues(matchTo: string): ValidatorFn
   {
 
+    //Back from AbstractControl beacuse every our control from him
     return (control:AbstractControl) =>
     {
-
+      //Compare between the password and confirm password
       return control?.value == control?.parent?.controls[matchTo].value? null: {isMatching: true}
       
     }

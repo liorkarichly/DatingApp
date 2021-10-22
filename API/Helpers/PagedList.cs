@@ -15,11 +15,11 @@ namespace API.Helpers
                        , int pageSize)
         {
 
-            CurrentPage = pageNumber;
-            TotalPages = (int)Math.Ceiling(count / (double)pageSize);
+            CurrentPage = pageNumber;       //10            5 //going to work out that we've got 2 pages from this query.
+            TotalPages = (int)Math.Ceiling(count / (double)pageSize);//Ceiling - Returns the smallest integral value that is greater than or equal to the specified double-precision floating-point number.
             PageSize = pageSize;
             TotalCount = count;
-            AddRange(items);
+            AddRange(items);// AddRange allows us to add multiple entities at once rather than the 'Add' method that only allows us to add a single entit
 
         }
 
@@ -28,7 +28,8 @@ namespace API.Helpers
         public int PageSize { get; set; }
         public int TotalCount { get; set; }
 
-        public static async Task<PagedList<T>> CreateAsync(IQueryable<T> source, int pageNumber
+        public static async Task<PagedList<T>> CreateAsync(IQueryable<T> source
+                                                    , int pageNumber
                                                     , int pageSize)
         {
 

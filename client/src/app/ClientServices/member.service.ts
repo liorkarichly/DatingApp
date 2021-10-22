@@ -4,10 +4,10 @@ import { of, pipe } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Member } from '../_models/member';
-import { PaginatedResult } from '../_models/pagination';
 import { User } from '../_models/user';
 import { userParames } from '../_models/userParams';
 import { AccountService } from './account.service';
+import { getPaginatedResult, getPaginationHeaders } from './paginationHelper';
 
 //options,I use in const httpOption for Authorization of members because the our users is protected by authentication 
 // const httpOptions = {
@@ -27,15 +27,20 @@ memberCache = new Map();
 user:User;
 userParams:userParames;
 
+//Map -  When we want to store something with a key and value
+      //, a good thing to use is a map.
+      //And a map is like a dictionary, really.
   constructor(private http:HttpClient
     , private accountService:AccountService)
      {
 
+      
       this.accountService.currentUser$.pipe(take(1)).subscribe(user  => 
         {
   
           this.user = user;
           this.userParams = new userParames(user);
+
         });
 
      }
@@ -45,13 +50,13 @@ userParams:userParames;
   {   
 
     var response = this.memberCache.get(Object.values(userParams).join('-'));
-    if(response)
+    if(response)//If we have in our cache the results of that particular query.
     {
 
-      return of(response);
+      return of(response);//We pass in a response.
 
     }
-      let params = this.getPaginationHeaders(userParams.pageNumber, userParams.pageSize);
+      let params = getPaginationHeaders(userParams.pageNumber, userParams.pageSize);
       
       params = params.append('minAge', userParams.minAge.toString());
       params = params.append('maxAge', userParams.maxAge.toString());
@@ -84,14 +89,18 @@ userParams:userParames;
   //     })
   //   );
 
-    return this.getPaginatedResult<Member[]>(this.baseUrl + 'users', params)
-           .pipe(map(response => 
+    return getPaginatedResult<Member[]>(this.baseUrl + 'users', params, this.http)
+           .pipe(map(response => //Use in pipe() because that getPaginatedResult return Observable<PaginatedResult<Member[]>>
             {
-              
-              this.memberCache.set(Object.values(userParams).join('-'), response);
+              // we'll use the map function and we use this to transform the data that we get back.
+              this.memberCache.set(Object.values(userParams).join('-'), response);//Input to cache, we'll have hold of the response inside here and then what we can do is say, let's stop, remember cash sets and we'll use the same key.
               return response
             
             }));
+            /**
+             * So the idea is that we go to our API, we go and get our members if we don't have them in our cash.
+               But if we do have them in our cash, in the query is identical, then we just retrieve this from our cache.
+             */
 
   }
 
@@ -107,14 +116,26 @@ userParams:userParames;
 
     // }
 
-    const member = [...this.memberCache.values()]
-    .reduce((previousValueArray,currentValueElement) => previousValueArray.concat(currentValueElement.result), [])
-    .find((member:Member) => member.username === username);
+
+    /**
+     * const member = ['...'this.memberCache.values()]
+     * The spread operator (in form of ellipsis) can be used in two ways:
+       Initializing arrays and objects from another array or object
+       Object de-structuring
+       The spread operator is most widely used for method arguments in form of rest parameters where more than 1 value is expected
+     * 
+     * 
+     * 
+     */
+    const member = [...this.memberCache.values()]                     //Initialize of array is empty (in first time) and we concat the element (members) that appearing for the first time.
+    .reduce((previousValueArray,currentValueElement) => previousValueArray.concat(currentValueElement.result), [])//Reduce our array into something else.We don't want an array of arrays with opportunity objects and other things inside it.
+    .find((member:Member) => member.username === username);//Without our user, checking if we have a member in array
 
       if(member)
       {
 
         return of(member);
+
       }
       
     return this.http.get<Member>(this.baseUrl + 'users/' + username);
@@ -149,38 +170,6 @@ userParams:userParames;
     
   }
 
-  private getPaginationHeaders(pageNumber:number, pageSize:number)
-  {
-
-    let params = new HttpParams();
-    
-    params = params.append('pageNumber', pageNumber.toString());
-    params = params.append('pageSize', pageSize.toString());
-
-    return params;
-
-  }
-
-  private getPaginatedResult<T>(url, params)
-  {
-
-    const paginatedResult:PaginatedResult<T> = new PaginatedResult<T>();
-    return this.http.get<T>(url, {observe: 'response', params}).pipe(
-      map(response => {
-        paginatedResult.result = response.body;
-        if(response.headers.get('pagination') !== null)
-        {
-
-          paginatedResult.pagination = JSON.parse(response.headers.get('pagination'));
-        }
-
-        return paginatedResult;
-      })
-    );
-
-  }
-
-
   getUserPararms()
   {
 
@@ -191,6 +180,7 @@ userParams:userParames;
   {
 
     this.userParams = params;
+
   }
 
   resetUserParams()
@@ -198,7 +188,7 @@ userParams:userParames;
 
     this.userParams = new userParames(this.user);
 
-    return  this.userParams;
+    return  this.userParams;//Return new user params 
 
   }
 
@@ -211,9 +201,9 @@ userParams:userParames;
 
   getLikes(predicate: string, pageNumber, pageSize)
   {
-    let params = this.getPaginationHeaders(pageNumber, pageSize);
+    let params = getPaginationHeaders(pageNumber, pageSize);
     params = params.append('predicate', predicate);
     //return this.http.get<Partial<Member[]>>(this.baseUrl + 'likes?predicate=' +  predicate);
-    return this.getPaginatedResult<Partial<Member[]>>(this.baseUrl + 'likes', params);
+    return getPaginatedResult<Partial<Member[]>>(this.baseUrl + 'likes', params, this.http);
   }
 }

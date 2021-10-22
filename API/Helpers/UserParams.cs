@@ -2,6 +2,7 @@ namespace API.Helpers
 {
     public class UserParams: PaginationParams
     {
+        //For sorting member
         public string CurrentUsername { get; set; }
 
         public string Gender { get; set; }
