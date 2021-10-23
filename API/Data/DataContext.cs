@@ -1,10 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using API.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace API.Data
 {
 
-    public class DataContext: DbContext
+    public class DataContext: IdentityDbContext<AppUser, AppRole, int
+    , IdentityUserClaim<int>, AppUserRole, IdentityUserLogin<int>
+    , IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
         
         //Injection point DbContext
@@ -12,8 +16,9 @@ namespace API.Data
         : base(i_Options)
         { }
 
+        //We have IdentityDbContext
         //Class to set in database
-        public DbSet<AppUser> Users { get; set; }
+        //public DbSet<AppUser> Users { get; set; }
         
         //Create table of likes
         public DbSet<UserLike> Likes { get; set; }
@@ -27,6 +32,17 @@ namespace API.Data
 
                 base.OnModelCreating(modelBuilder);//we add try and add immigration
 
+                modelBuilder.Entity<AppUser>()
+                .HasMany(userRole => userRole.UserRoles)
+                .WithOne(user => user.User)
+                .HasForeignKey(userRole => userRole.UserId)
+                .IsRequired();
+
+                modelBuilder.Entity<AppRole>()
+                .HasMany(userRole => userRole.UserRoles)
+                .WithOne(user => user.Role)
+                .HasForeignKey(userRole => userRole.RoleId)
+                .IsRequired();
 
                 //Use in our entities 'USerLike', and create key that can to use with source key
                 //and we have the key to table

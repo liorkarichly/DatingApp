@@ -10,7 +10,6 @@ import { Member } from "../_models/member";
 })
 export class MemberDetailedResolver implements Resolve<Member>
 {
-
     
     constructor(private memberService: MemberService) {
         

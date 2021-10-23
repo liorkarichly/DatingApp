@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using System;//DateTime
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace API.Services
 {
@@ -21,18 +24,22 @@ namespace API.Services
         The key dosent need to leave the server.
         */
         private readonly SymmetricSecurityKey r_SymmetricSecurityKey;
-        
-        public TokenService(IConfiguration i_Config)
+        private readonly UserManager<AppUser> r_UserManger;
+
+        public TokenService(IConfiguration i_Config, UserManager<AppUser> i_UserManger)
         {
             //Get byte[]                                            
             r_SymmetricSecurityKey = new SymmetricSecurityKey(
                 Encoding
                 .UTF8               //Property
                 .GetBytes(i_Config["TokenKey"]));
+
+            this.r_UserManger = i_UserManger;
+
         }
 
         ///Actual logic of what we need to do inside here to actually create the token
-        public string CreateToken(AppUser user)
+        public async Task<string> CreateToken(AppUser user)
         {
             
             //Insid the token, save claims
@@ -45,6 +52,9 @@ namespace API.Services
                      new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName)
 
             };
+
+            var roles = await r_UserManger.GetRolesAsync(user);//list of roles that this user
+            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));//add them into our list of claims,The JWT registered claim names do not have an option for a role inside here.
 
             //Create credentials, we save all creds equals new signing credentials
             var credentials = new SigningCredentials(

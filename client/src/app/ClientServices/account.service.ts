@@ -54,6 +54,10 @@ currentUser$ = this.currentUserSource.asObservable(); //$ sign the object is obs
   setCurrentUser(user:User)
   {
 
+    user.roles = [];
+    const roles = this.getDecodedToken(user.token).role;//Take the roles
+    Array.isArray(roles)? user.roles = roles:user.roles.push(roles);
+    
     localStorage.setItem('user', JSON.stringify(user));
 
     this.currentUserSource.next(user);
@@ -82,6 +86,28 @@ currentUser$ = this.currentUserSource.asObservable(); //$ sign the object is obs
           }
         })
     )
+  }
+
+  /*We close the of attempts, 
+  what we need is to take a look inside our 
+  token from our account service.
+  And we decoded the token for identity*/
+  getDecodedToken(token)
+  {
+
+    /*atob - This is just going to allow us to decode the information inside what 
+             the token is returned.
+             As the token is not encrypted, the signature is the only part is encrypte
+    */
+
+      return JSON.parse(atob(token.split('.')[1]))//We take the part of payload
+      /**
+       * Token with 3 parts
+       * 1.title
+       * 2.payload
+       * 3.signature
+       */
+
   }
 
 }

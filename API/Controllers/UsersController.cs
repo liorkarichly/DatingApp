@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using API.Extensions;
 using System.Linq;
 using API.Helpers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -38,6 +39,7 @@ namespace API.Controllers
         //End point for list users, result to client
         //Async Task its make to call to database in synchornous
         // [AllowAnonymous]
+        //[Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MemberDTOs>>> GetUsers([FromQuery] UserParams userParams)
         {
@@ -84,6 +86,8 @@ namespace API.Controllers
         //     return await r_UserRepository.GetUserByIdAsync(Id);
 
         // }
+
+        //[Authorize(Roles = "Member")]
                                 //For route name
         [HttpGet("{username}", Name = "GetUser")]
         public async Task<ActionResult<MemberDTOs>> GetUsers(string username)///Endpoint for specifics parameter

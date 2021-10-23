@@ -3,13 +3,31 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using API.Entities;
+using Microsoft.AspNetCore.Identity;
+using API.Data;
 
 namespace API.Extensions
 {
+    //Identity service extensions.
     public static class IdentityServiceExtensions
     {
         public static IServiceCollection AddIdentityServices(this IServiceCollection i_Service, IConfiguration i_Config)
         {
+/*We've gone for a single page application using ANGULAR and we're using token based authorization. so we use in AddIdentityCore*/
+                //AddIdentityCore - Adds and configures the identity system for the specified User type. Role services are not added by default
+                //AddRoles - Adds Role related services for TRole, including IRoleStore, IRoleValidator, and RoleManager.
+                //AddRoleManager - Adds a RoleManager<TRole> for the IdentityBuilder.RoleType.
+                i_Service.AddIdentityCore<AppUser>(options =>
+                {
+                    options.Password.RequireNonAlphanumeric = false;
+                    
+                })
+                .AddRoles<AppRole>()//Get entity from API
+                .AddRoleManager<RoleManager<AppRole>>()//Manager our entities and we gice to role manager the type of AppRole,Provides the APIs for managing roles in a persistence store.
+                .AddSignInManager<SignInManager<AppUser>>()//Provides the APIs for user sign in.
+                .AddRoleValidator<RoleValidator<AppRole>>()//RoleValidator - Provides the default validation of roles.
+                .AddEntityFrameworkStores<DataContext>();//Adds an Entity Framework implementation of identity information stores.
 
             //Add middleware,
             //First, add authentication             
@@ -31,6 +49,15 @@ namespace API.Extensions
                 }
 
             );
+
+        i_Service.AddAuthorization(
+            options =>
+            {
+
+                options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+                options.AddPolicy("ModeratePhotoRole", policy => policy.RequireRole("Admin", "Moderator"));
+            
+            });
 
             return i_Service;
 

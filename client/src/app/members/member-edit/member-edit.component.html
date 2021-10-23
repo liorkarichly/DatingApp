@@ -40,7 +40,6 @@
             </div><!--End Button-->
         </div>
     </div>
-
     <div class="col-8">
         <tabset class="member-tabset">
             <tab heading='About {{member.knownAs}}'><!--Beacuse the encapsulation is on default and the style of tabs is thier-->
@@ -61,7 +60,6 @@
                         <input [(ngModel)]="member.country" type="text" name="country" class="form-control mx-2">
                     </div>
                 </form><!--End Form-->
-               
             </tab>
             <tab heading='Edit Photos'>
                 <app-photo-editor [member]="member"></app-photo-editor>
