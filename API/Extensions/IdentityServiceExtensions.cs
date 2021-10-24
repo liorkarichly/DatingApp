@@ -6,6 +6,7 @@ using System.Text;
 using API.Entities;
 using Microsoft.AspNetCore.Identity;
 using API.Data;
+using System.Threading.Tasks;
 
 namespace API.Extensions
 {
@@ -45,6 +46,26 @@ namespace API.Extensions
                         ValidateAudience = false// Flag, validate the audience, token is our angular application
                    
                     };
+
+                    options.Events = new JwtBearerEvents{
+                        OnMessageReceived = context => 
+                        {
+                            var accessToken = context.Request.Query["access_token"];//This needs to be specific because signalR by default will send up our token.
+                            
+                            //We want to do is take the path
+                            var path = context.HttpContext.Request.Path;
+
+                            if(!string.IsNullOrEmpty(accessToken) &&
+                            path.StartsWithSegments("/hubs")) 
+                            {
+
+                                context.Token = accessToken;
+
+                            }
+                        
+                            return Task.CompletedTask;
+                            
+                        }};
 
                 }
 

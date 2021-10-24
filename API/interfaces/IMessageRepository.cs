@@ -9,6 +9,19 @@ namespace API.interfaces
     public interface IMessageRepository
     {
 
+        //Menager our group with the chat
+        void AddGroup(Group group);
+
+        void RemoveConnection(Connection connection);
+
+        Task<Connection> GetConnection(string connectionId);
+
+        Task<Group> GetMessageGroup(string groupName);
+
+        Task<Group> GetGroupForConnections(string connectionId);
+
+        //Manager message
+
         void AddMessage(Message message);
 
         void DeleteMassage(Message message);

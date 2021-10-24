@@ -18,7 +18,7 @@ namespace API.Entities
 
         public string Content { get; set; }//What i write
         public DateTime? DateRead { get; set; }//When i read the message
-        public DateTime MessageSent { get; set; } = DateTime.Now;// When i send the message,set the time to the current server timestamp
+        public DateTime MessageSent { get; set; } = DateTime.UtcNow;// When i send the message,set the time to the current server timestamp
         public bool SenderDeleted { get; set; }
         public bool RecipientDeleted { get; set; }
 

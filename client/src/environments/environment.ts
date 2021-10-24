@@ -4,7 +4,8 @@
 //put inside this is any variables we want to use across our application that will automatically
 export const environment = {
   production: false, 
-  apiUrl: 'https://localhost:5001/api/'
+  apiUrl: 'https://localhost:5001/api/',
+  hubUrl: 'https://localhost:5001/hubs/'
 };
 
 /*

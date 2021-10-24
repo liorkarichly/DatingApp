@@ -67,7 +67,7 @@ namespace API.Services
             {
 
                 Subject = new ClaimsIdentity(claims),//Contains our claims identity and pass in the claims.
-                Expires = DateTime.Now.AddDays(7),//How long is this token going to be valid for?
+                Expires = DateTime.UtcNow.AddDays(7),//How long is this token going to be valid for?
                 SigningCredentials = credentials//Need to pass in the signing credentials into less and well specify credits.
 
             };

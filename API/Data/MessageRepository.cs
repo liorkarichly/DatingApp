@@ -27,6 +27,7 @@ namespace API.Data
 
         }
 
+      
         public void AddMessage(Message message)
         {
 
@@ -41,6 +42,7 @@ namespace API.Data
 
         }
 
+      
         public async Task<Message> GetMessage(int id)
         {
 
@@ -102,7 +104,7 @@ namespace API.Data
                     foreach(var message in messages)
                     {
 
-                        message.DateRead = DateTime.Now;//Mark them as read
+                        message.DateRead = DateTime.UtcNow;//Mark them as read
 
                     }
 
@@ -117,9 +119,49 @@ namespace API.Data
         public async Task<bool> SaveAllAsync()
         {
 
-
             return await r_DataContext.SaveChangesAsync() > 0;
 
+        }
+
+        /*------------------Manaer Group Chats --------------------*/
+
+        public void AddGroup(Group group)
+        {
+            
+            r_DataContext.Groups.Add(group);
+        }
+
+        public async Task<Connection> GetConnection(string connectionId)
+        {
+           
+           return await r_DataContext.Connections.FindAsync(connectionId);
+
+        }
+
+        public async Task<Group> GetMessageGroup(string groupName)
+        {
+            
+            return await r_DataContext.Groups
+            .Include(groupConnection => groupConnection.Connection)
+            .FirstOrDefaultAsync(groupConnection => groupConnection.Name == groupName);
+
+        }
+
+        public void RemoveConnection(Connection connection)
+        {
+            
+            r_DataContext.Connections.Remove(connection);
+            
+        }
+
+        public async Task<Group> GetGroupForConnections(string connectionId)
+        {
+            
+            return await r_DataContext.Groups
+            .Include(connection => connection.Connection)
+            .Where(connection => connection.Connection.Any(user => user.ConnectionId == connectionId))
+            .FirstOrDefaultAsync();
+        
         }
     }
 }

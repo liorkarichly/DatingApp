@@ -4,6 +4,7 @@ import { ReplaySubject } from 'rxjs';
 import {map} from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { User } from '../_models/user';
+import { PresenceService } from './presence.service';
 
 /**
  * 1. Services are injectable
@@ -25,7 +26,8 @@ currentUser$ = this.currentUserSource.asObservable(); //$ sign the object is obs
 
 //Inject the HTTP Client into our account service
   //Get from angular 
-  constructor(private http:HttpClient) { }
+  constructor(private http:HttpClient,
+    private presenceService: PresenceService) { }
 
   login(model:any)
   {
@@ -42,6 +44,7 @@ currentUser$ = this.currentUserSource.asObservable(); //$ sign the object is obs
           // this.currentUserSource.next(user);//Current user, how to set the next value 
 
           this.setCurrentUser(user);
+          this.presenceService.createHubConnection(user);
         }
 
         //return user; for to print in consol 
@@ -70,10 +73,12 @@ currentUser$ = this.currentUserSource.asObservable(); //$ sign the object is obs
     //Remove from browser the user by key
     localStorage.removeItem('user');
     this.currentUserSource.next(null);
+    this.presenceService.stopHubConnection();
 
   }
 
-  register(model:any){
+  register(model:any)
+  {
 
     return this.http.post(this.baseUrl + 'account/register' , model).pipe(
       map((user: User) => {//We casting because, the map get object and it didnt know that he get User object, any for get around for any problem 
@@ -82,6 +87,7 @@ currentUser$ = this.currentUserSource.asObservable(); //$ sign the object is obs
           {
 
            this.setCurrentUser(user);
+           this.presenceService.createHubConnection(user);
 
           }
         })

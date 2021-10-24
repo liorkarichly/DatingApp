@@ -1,26 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Microsoft.EntityFrameworkCore;
-using API.Data;
-using API.interfaces;
-using API.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
- using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using API.Extensions;
 using API.Middleware;
-
+using API.SignalR;
 
 namespace API
 {
@@ -55,6 +40,7 @@ namespace API
 
            services.AddIdentityServices(r_Config);//Extentions method
             
+            services.AddSignalR();//Add the service of SignalR
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,6 +68,7 @@ namespace API
             //Take some configuration
             app.UseCors(policy => policy.AllowAnyHeader()// allow to any headers in policy, sending up headers such as authentication headers to our API from our angular application
                                          .AllowAnyMethod()//allow in any method in policy,to allow put requset, post request, get request,etc.
+                                         .AllowCredentials()//Supply lists when we're using signalR due to the way that we now send up our access token or our token.
                                          .WithOrigins("https://localhost:4200"));//the origin that we want to route (specific origin) 
 
             //This so important to Authentication before the Authorization
@@ -96,7 +83,9 @@ namespace API
             {
 
                 endpoints.MapControllers();
-
+                endpoints.MapHub<PresenceHub>("hubs/presence");//President's hub going to be accessed from
+                endpoints.MapHub<MessageHub>("hubs/message");
+                
             });
 
         }

@@ -28,53 +28,53 @@ namespace API.Controllers
             this.r_Mapper = i_Mapper;
         }
 
-        [HttpPost]
-        public async Task<ActionResult<MessageDTOs>> CreateMessage(CreateMessageDTOs createMessage)
-        {
+        // [HttpPost]
+        // public async Task<ActionResult<MessageDTOs>> CreateMessage(CreateMessageDTOs createMessage)
+        // {
             
+        //     /*PASS TO MESSAGE HUB*/
+        //     var username = User.GetUsername();//Take username of sender
 
-            var username = User.GetUsername();//Take username of sender
+        //     if(username == createMessage.RecipientUsername.ToLower())//Checking if the username sender to him self
+        //     {
 
-            if(username == createMessage.RecipientUsername.ToLower())//Checking if the username sender to him self
-            {
+        //         return BadRequest("You cannot send message yourself");
 
-                return BadRequest("You cannot send message yourself");
+        //     }
 
-            }
+        //     var sender = await r_UserRepository.GetUserByUsernameAsync(username);//Take the user
+        //     var recipient = await r_UserRepository.GetUserByUsernameAsync(createMessage.RecipientUsername);
 
-            var sender = await r_UserRepository.GetUserByUsernameAsync(username);//Take the user
-            var recipient = await r_UserRepository.GetUserByUsernameAsync(createMessage.RecipientUsername);
+        //     if(recipient == null)
+        //     {
 
-            if(recipient == null)
-            {
+        //         return NotFound();
 
-                return NotFound();
+        //     }
 
-            }
+        //     var message = new Message
+        //     {
 
-            var message = new Message
-            {
+        //         Sender = sender,
+        //         Recipient = recipient,
+        //         SenderUsername = sender.UserName,
+        //         RecupientUsername = recipient.UserName,
+        //         Content = createMessage.Content
 
-                Sender = sender,
-                Recipient = recipient,
-                SenderUsername = sender.UserName,
-                RecupientUsername = recipient.UserName,
-                Content = createMessage.Content
+        //     };
 
-            };
+        //     r_MessageRepository.AddMessage(message);
 
-            r_MessageRepository.AddMessage(message);
+        //     if(await r_MessageRepository.SaveAllAsync())
+        //     {
 
-            if(await r_MessageRepository.SaveAllAsync())
-            {
+        //         return Ok(r_Mapper.Map<MessageDTOs>(message));//Mapper my massage 
 
-                return Ok(r_Mapper.Map<MessageDTOs>(message));//Mapper my massage 
+        //     }
 
-            }
+        //         return BadRequest("Failed to send message");
 
-                return BadRequest("Failed to send message");
-
-        }
+        // }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MessageDTOs>>> GetMessageForUser([FromQuery] MessageParams messageParams)

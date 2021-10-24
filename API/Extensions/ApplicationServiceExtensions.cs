@@ -5,6 +5,7 @@ using API.Data;
 using API.Services;
 using Microsoft.EntityFrameworkCore;
 using API.Helpers;
+using API.SignalR;
 
 namespace API.Extensions
 {
@@ -12,7 +13,9 @@ namespace API.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection i_Services, IConfiguration i_Config)
         {
-
+            
+            
+            i_Services.AddSingleton<PresenceTracker>();
                 //I turn the service to configuration for take the service of cloudinary and he need to search the section "CloudinarySettings"
             i_Services.Configure<CloudinarySettings>(i_Config.GetSection("CloudinarySettings"));
 

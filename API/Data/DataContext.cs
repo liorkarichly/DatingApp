@@ -26,6 +26,10 @@ namespace API.Data
         //Create table of Messages
         public DbSet<Message> Messages { get; set; }
 
+        public DbSet<Group> Groups { get; set; }
+
+        public DbSet<Connection> Connections { get; set; }
+
         //Gives to entities some configuration, create relationships many to many
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
