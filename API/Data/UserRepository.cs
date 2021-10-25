@@ -107,6 +107,7 @@ namespace API.Data
 
         }
 
+
         /**
         Return list of users
         */
@@ -121,13 +122,14 @@ namespace API.Data
 
         /**
        Save changes  of context by user
+       Use in UnitOfWork
        */
-        public async Task<bool> SaveAllAsAsync()
-        {
+        // public async Task<bool> SaveAllAsAsync()
+        // {
 
-            return await r_Context.SaveChangesAsync() > 0;
+        //     return await r_Context.SaveChangesAsync() > 0;
 
-        }
+        // }
 
         public void Update(AppUser user)
         {
@@ -136,6 +138,17 @@ namespace API.Data
             //Flag
             r_Context.Entry(user).State = EntityState.Modified;
 
+        }
+
+        
+        public async Task<string> GetUserGender(string username)
+        {
+           
+           return await r_Context.Users
+                .Where(user => user.UserName == username)
+                .Select(user => user.Gender)
+                .FirstOrDefaultAsync();
+        
         }
     }
 }

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using API.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using API.Extensions;
 
 namespace API.Data
 {
@@ -86,6 +87,8 @@ namespace API.Data
                     .WithMany(member => member.MessagesSent)//Collection of sent
                     .OnDelete(DeleteBehavior.Restrict);
 
+                modelBuilder.ApplyUtcDateTimeConverter();//Convert to DateTime to DateTimeUtc
+                
         }
         
     }

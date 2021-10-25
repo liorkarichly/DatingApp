@@ -14,13 +14,25 @@ namespace API.Controllers
     [Authorize]
     public class LikesController : BaseApiController
     {
-        private readonly IUserRepository r_UserRepository;
-        private readonly ILikeRepository r_LikeRepository;
 
-        public LikesController(IUserRepository i_UserRepository, ILikeRepository i_LikeRepository)
+        //----Use in UnitOfWork---//
+        // private readonly IUserRepository r_UserRepository;
+        // private readonly ILikeRepository r_UnitOfWork.LikeRepository;
+
+        // public LikesController(IUserRepository i_UserRepository, ILikeRepository i_LikeRepository)
+        // {
+        //     this.r_UserRepository = i_UserRepository;
+        //     this.r_UnitOfWork.LikeRepository = i_LikeRepository;
+        // }
+
+        private readonly IUnitOfWork r_UnitOfWork;
+
+
+        public LikesController(IUnitOfWork i_UnitOfWork)
         {
-            this.r_UserRepository = i_UserRepository;
-            this.r_LikeRepository = i_LikeRepository;
+
+            this.r_UnitOfWork = i_UnitOfWork;
+
         }
 
         [HttpPost("{username}")]
@@ -28,8 +40,8 @@ namespace API.Controllers
         {
             
             var sourceUserId = User.GetUserID();//Take my id
-            var likedUser = await r_UserRepository.GetUserByUsernameAsync(username);//Find username of other user
-            var sourceUser = await r_LikeRepository.GetUserWithLikes(sourceUserId);//Take user with like
+            var likedUser = await r_UnitOfWork.UserRepository.GetUserByUsernameAsync(username);//Find username of other user
+            var sourceUser = await r_UnitOfWork.LikeRepository.GetUserWithLikes(sourceUserId);//Take user with like
 
             if(likedUser == null)
             {
@@ -45,7 +57,7 @@ namespace API.Controllers
 
             }
 
-            var userLike = await r_LikeRepository.GetUserLike(sourceUserId, likedUser.Id);
+            var userLike = await r_UnitOfWork.LikeRepository.GetUserLike(sourceUserId, likedUser.Id);
 
             if(userLike != null)//I like him! Was matching
             {
@@ -64,12 +76,23 @@ namespace API.Controllers
 
             sourceUser.LikedUsers.Add(userLike);
 
-            if(await r_UserRepository.SaveAllAsAsync())
+
+            //Use in UnitOfWork
+            // if(await r_UnitOfWork.UserRepository.SaveAllAsAsync())
+            // {
+
+            //     return Ok();
+            
+            // }
+
+            if(await r_UnitOfWork.Complete())
             {
 
                 return Ok();
             
             }
+
+
 
             return BadRequest("Failed to like user!");
 
@@ -80,7 +103,7 @@ namespace API.Controllers
         {
 
                     likesParams.UserId = User.GetUserID();
-                    var users = await r_LikeRepository.GetUserLikes(likesParams);
+                    var users = await r_UnitOfWork.LikeRepository.GetUserLikes(likesParams);
 
                     Response.AddPaginationHeader(users.CurrentPage, users.PageSize,users.TotalCount, users.TotalPages);
                     return Ok(users);

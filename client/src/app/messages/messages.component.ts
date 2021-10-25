@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ConfirmService } from '../ClientServices/confirm.service';
 import { MessageService } from '../ClientServices/message.service';
 import { Message } from '../_models/message';
 import { Pagination } from '../_models/pagination';
@@ -16,7 +17,8 @@ pageNumber = 1;
 pageSize = 10;
 loading = false;
 
-  constructor(private messageService: MessageService) { }
+  constructor(private messageService: MessageService
+    , private confirmService: ConfirmService) { }
 
   ngOnInit(): void 
   {
@@ -51,15 +53,25 @@ loading = false;
     deleteMessage(id: number)
     {
       
-      this.messageService.deleteMessage(id).subscribe
-      (() => 
-      {
+      this.confirmService.confirm('Confirm delete message', 'This cannot be undone')
+      .subscribe(result =>
+        {
+          if(result)
+          {
 
-        this.messages
-        .splice(this.messages.findIndex(messageDelete => messageDelete.id === id), 1);
+            this.messageService.deleteMessage(id).subscribe
+            (() => 
+            {
+      
+              this.messages
+              .splice(this.messages.findIndex(messageDelete => messageDelete.id === id), 1);
+      
+            });
+      
 
-      });
-
+          }
+        })
+     
     }
 
 }

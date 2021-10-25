@@ -1,9 +1,10 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { MessageService } from 'src/app/ClientServices/message.service';
 import { Message } from 'src/app/_models/message';
 
 @Component({
+  changeDetection:ChangeDetectionStrategy.OnPush, //change detection strategy and override its defaults and its default is to check always.
   selector: 'app-member-messages',
   templateUrl: './member-messages.component.html',
   styleUrls: ['./member-messages.component.css']

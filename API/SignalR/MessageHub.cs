@@ -13,24 +13,29 @@ namespace API.SignalR
     public class MessageHub: Hub
     {
 
-        private readonly IMessageRepository r_MessageRepository;
+        //private readonly IMessageRepository r_MessageRepository;
+        //private readonly IUserRepository r_UserRepository;
         private readonly IMapper r_Mapper;
-        private readonly IUserRepository r_UserRepository;
+        
         private readonly IHubContext<PresenceHub> r_PresenceHub;
         private readonly PresenceTracker r_PresenceTracker;
 
-        public MessageHub(IMessageRepository i_MessageRepository
-                        , IMapper i_Mapper
-                        , IUserRepository i_UserRepository
+        private readonly IUnitOfWork r_UnitOfWork;
+
+        public MessageHub(//IMessageRepository i_MessageRepository
+                        // , IUserRepository i_UserRepository
+                        IUnitOfWork i_UnitOfWork
+                        ,IMapper i_Mapper              
                         ,IHubContext<PresenceHub> i_PresenceHub
                         ,PresenceTracker i_PresenceTracker)
         {
 
-            this.r_MessageRepository = i_MessageRepository;
-            this.r_Mapper = i_Mapper;
-            this.r_UserRepository = i_UserRepository;
+            //this.r_MessageRepository = i_MessageRepository;
+            // this.r_UserRepository = i_UserRepository;
+            this.r_Mapper = i_Mapper;     
             this.r_PresenceHub = i_PresenceHub;
             this.r_PresenceTracker = i_PresenceTracker;
+            this.r_UnitOfWork = i_UnitOfWork;
 
         }
 
@@ -52,9 +57,18 @@ namespace API.SignalR
 
             await Clients.Group(groupName).SendAsync("UpdatedGroup", group);//Send the group name to group
 
-            var messages = await r_MessageRepository
-                    .GetMessageThread(Context.User.GetUsername(), otherUser);//Create the message to users on group
+            // var messages = await r_MessageRepository Use in UnitOfWork
+            //         .GetMessageThread(Context.User.GetUsername(), otherUser);//Create the message to users on group
 
+            var messages = await r_UnitOfWork.MessageRepository
+                    .GetMessageThread(Context.User.GetUsername(), otherUser);
+
+            if(r_UnitOfWork.HasChanges())
+            {
+
+                await r_UnitOfWork.Complete();
+                
+            }
             //await Clients.Group(groupName).SendAsync("ReceiveMessageThread", messages);//Send the messages 
             await Clients.Caller.SendAsync("ReceiveMessageThread", messages);
         }
@@ -101,8 +115,12 @@ namespace API.SignalR
 
             }
 
-            var sender = await r_UserRepository.GetUserByUsernameAsync(username);//Take the user
-            var recipient = await r_UserRepository.GetUserByUsernameAsync(createMessageDto.RecipientUsername);
+            // var sender = await r_UserRepository.GetUserByUsernameAsync(username);//Take the user
+            // var recipient = await r_UserRepository.GetUserByUsernameAsync(createMessageDto.RecipientUsername);
+
+            var sender = await r_UnitOfWork.UserRepository.GetUserByUsernameAsync(username);//Take the user
+            var recipient = await r_UnitOfWork.UserRepository.GetUserByUsernameAsync(createMessageDto.RecipientUsername);
+
 
             if(recipient == null)
             {
@@ -123,7 +141,8 @@ namespace API.SignalR
             };
 
             var groupName = GetGroupName(sender.UserName, recipient.UserName);
-            var group = await r_MessageRepository.GetMessageGroup(groupName);
+            //var group = await r_MessageRepository.GetMessageGroup(groupName);
+            var group = await r_UnitOfWork.MessageRepository.GetMessageGroup(groupName);
 
             if(group.Connection.Any(groups => groups.Username == recipient.UserName))//Only when the users is connection
             {
@@ -146,9 +165,11 @@ namespace API.SignalR
                 
             }
 
-            r_MessageRepository.AddMessage(message);
+            //r_MessageRepository.AddMessage(message);
+            r_UnitOfWork.MessageRepository.AddMessage(message);
 
-            if(await r_MessageRepository.SaveAllAsync())
+            //if(await r_MessageRepository.SaveAllAsync())
+            if(await r_UnitOfWork.Complete())
             {
 
               
@@ -164,20 +185,23 @@ namespace API.SignalR
         public async Task<Group> AddToGroup(string groupName)
         {
 
-            var group = await r_MessageRepository.GetMessageGroup(groupName);//Get group name
+            //var group = await r_MessageRepository.GetMessageGroup(groupName);//Get group name
+            var group = await r_UnitOfWork.MessageRepository.GetMessageGroup(groupName);
             var connection = new Connection(Context.ConnectionId, Context.User.GetUsername());//Create new connextion when the user connnection
 
             if(group == null)//If its new group
             {
 
                 group = new Group(groupName);
-                r_MessageRepository.AddGroup(group);
+                //r_MessageRepository.AddGroup(group);
+                r_UnitOfWork.MessageRepository.AddGroup(group);
 
             }
 
             group.Connection.Add(connection);//The user in group get new id every connection 
 
-            if( await r_MessageRepository.SaveAllAsync())
+            //if( await r_MessageRepository.SaveAllAsync())
+            if( await r_UnitOfWork.Complete())
             {
 
                 return group;
@@ -191,11 +215,15 @@ namespace API.SignalR
         private async Task<Group> RemoveFromMessageGroup()
         {
                                                             //We inside the hub so we can to use in Context
-            var group = await r_MessageRepository.GetGroupForConnections(Context.ConnectionId);
+            //var group = await r_MessageRepository.GetGroupForConnections(Context.ConnectionId);
+           var group = await r_UnitOfWork.MessageRepository.GetGroupForConnections(Context.ConnectionId);
             var connection = group.Connection.FirstOrDefault(user => user.ConnectionId == Context.ConnectionId);
            
-            r_MessageRepository.RemoveConnection(connection);
-            if(await r_MessageRepository.SaveAllAsync())
+            // r_MessageRepository.RemoveConnection(connection);  
+            r_UnitOfWork.MessageRepository.RemoveConnection(connection);
+
+            // if(await r_MessageRepository.SaveAllAsync())
+            if(await r_UnitOfWork.Complete())
             {
 
                 return group;

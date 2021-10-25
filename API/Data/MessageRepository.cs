@@ -58,24 +58,25 @@ namespace API.Data
 
             var query = r_DataContext.Messages
             .OrderByDescending(message => message.MessageSent)
+            .ProjectTo<MessageDTOs>(r_Mapper.ConfigurationProvider)
             .AsQueryable();//Return messages that return
 
             query = messageParams.Container switch
             {
 
-                "Inbox" => query.Where(user => user.Recipient.UserName == messageParams.Usernmae 
+                "Inbox" => query.Where(user => user.RecipientUsername == messageParams.Usernmae 
                 && user.RecipientDeleted == false),
-                "Outbox" => query.Where(user => user.Sender.UserName == messageParams.Usernmae
+                "Outbox" => query.Where(user => user.SenderUsername == messageParams.Usernmae
                  && user.SenderDeleted == false),
-                _ => query.Where(user => user.Recipient.UserName == messageParams.Usernmae && user.DateRead == null
+                _ => query.Where(user => user.RecipientUsername== messageParams.Usernmae && user.DateRead == null
                 && user.RecipientDeleted == false)
 
             };
 
+            //I Projection this in var query 
+            //var messages = query.ProjectTo<MessageDTOs>(r_Mapper.ConfigurationProvider);
 
-            var messages = query.ProjectTo<MessageDTOs>(r_Mapper.ConfigurationProvider);
-
-            return await PagedList<MessageDTOs>.CreateAsync(messages, messageParams.PageNumber, messageParams.PageSize);
+            return await PagedList<MessageDTOs>.CreateAsync(query, messageParams.PageNumber, messageParams.PageSize);
 
         }
 
@@ -83,9 +84,10 @@ namespace API.Data
                                                              , string recipientUsername)
         {
             
+            /*This is big query and i want to improve it!*/
             var messages = await  r_DataContext.Messages
-                            .Include(user => user.Sender).ThenInclude(photo => photo.Photos)
-                            .Include(user => user.Recipient).ThenInclude(photo => photo.Photos)
+                            // .Include(user => user.Sender).ThenInclude(photo => photo.Photos)
+                            // .Include(user => user.Recipient).ThenInclude(photo => photo.Photos)//We can down this because tha we have the projection and i want only the message
                             .Where(message => message.Recipient.UserName == currentUsername
                                     && message.RecipientDeleted == false
                                     && message.Sender.UserName == recipientUsername
@@ -93,10 +95,11 @@ namespace API.Data
                                     && message.Sender.UserName == currentUsername
                                     && message.SenderDeleted == false)
                             .OrderBy(message => message.MessageSent)
+                            .ProjectTo<MessageDTOs>(r_Mapper.ConfigurationProvider)//Mapper before that we sending to the list
                             .ToListAsync();//Get converstion of users
 
-            var unreadMessages = messages//Unread Messages
-            .Where(message => message.DateRead == null && message.Recipient.UserName == currentUsername).ToList();
+            var unreadMessages = messages//pull unread Messages
+            .Where(message => message.DateRead == null && message.RecipientUsername == currentUsername).ToList();
 
                 if(unreadMessages.Any())
                 {
@@ -108,20 +111,24 @@ namespace API.Data
 
                     }
 
-                    await r_DataContext.SaveChangesAsync();
+                    //await r_DataContext.SaveChangesAsync();//Pass to MessageHub
 
                 }
 
-            return r_Mapper.Map<IEnumerable<MessageDTOs>>(messages);//Return MessageDTOs
+            return messages;
                 
         }
 
-        public async Task<bool> SaveAllAsync()
-        {
+        /*
+        Save about messages
+        Use in UnitOfWork
+        */
+        // public async Task<bool> SaveAllAsync()
+        // {
 
-            return await r_DataContext.SaveChangesAsync() > 0;
+        //     return await r_DataContext.SaveChangesAsync() > 0;
 
-        }
+        // }
 
         /*------------------Manaer Group Chats --------------------*/
 
