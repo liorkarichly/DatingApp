@@ -39,7 +39,7 @@ namespace API.Data
             
         // }
 
-         public async Task<MemberDTOs> GetMemberAsync(string username, bool? isCurrentUser)
+        public async Task<MemberDTOs> GetMemberAsync(string username, bool? isCurrentUser)
         {
             // return await r_Context.Users.Where(//We show in termnial the property of AppUser
             //     member => member.UserName == username)
