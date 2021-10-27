@@ -5,15 +5,17 @@ namespace API.interfaces
     public interface IUnitOfWork
     {
         
-        IUserRepository UserRepository {get; }
+      IUserRepository UserRepository {get; }
 
-         IMessageRepository MessageRepository { get; }
+      IMessageRepository MessageRepository { get; }
 
-         ILikeRepository LikeRepository {get; }
+      ILikeRepository LikeRepository {get; }
 
-         Task<bool> Complete();
+      IPhotoRepository PhotoRepository {get; }
 
-         bool HasChanges();//Use this one for to see if entity framework has been tracking or has any changes, we'll need to use that in one specific place.
+      Task<bool> Complete();
+
+      bool HasChanges();//Use this one for to see if entity framework has been tracking or has any changes, we'll need to use that in one specific place.
          
     }
 }

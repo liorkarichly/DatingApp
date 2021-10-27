@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { AccountService } from '../ClientServices/account.service';
                 //Input Decorator
 @Component({
@@ -20,8 +19,7 @@ export class RegisterComponent implements OnInit {
 
 //FormBuilder - Called the form builder service and will inject the form builder inside here.
   constructor(private accountService: AccountService
-            , private toastr: ToastrService
-            ,private formBuilder: FormBuilder//Create AbstractControl, Create Syntax that shortens creating instans FormGroup, FormControl
+            , private formBuilder: FormBuilder//Create AbstractControl, Create Syntax that shortens creating instans FormGroup, FormControl
             ,private router: Router) { }
 
   ngOnInit(): void {
@@ -101,8 +99,11 @@ export class RegisterComponent implements OnInit {
 
     );
       // the validator on the confirmPassword field again when the password field is updated. 
-    this.registerForm.controls.password.valueChanges.subscribe(() => {
+    this.registerForm.controls.password.valueChanges.subscribe(() => 
+    {
+
       this.registerForm.controls.confirmPassword.updateValueAndValidity();
+
     });
 
   }

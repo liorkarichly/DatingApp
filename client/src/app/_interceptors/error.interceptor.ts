@@ -16,7 +16,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 //the structure of what an 
 //error intercept is or an HTTP interceptor is to be more accurate.
 
-  constructor(private router: Router, private toasts: ToastrService) {}
+  constructor(private router: Router, private toastr: ToastrService) {}
 
   //Intercept the request that goes out or the 
   //response that comes back in the next where we handle the response.
@@ -59,13 +59,14 @@ export class ErrorInterceptor implements HttpInterceptor {
               else if(typeof(error.error) === 'object')
               {
 
-                this.toasts.error(error.statusText, error.status);
+                this.toastr.error(error.statusText === 'OK' ? 'Bad Request' : error.statusText, error.status);
+              
               
               }
               else
               {
 
-                this.toasts.error(error.error, error.status);
+                this.toastr.error(error.error, error.status);
 
               }
 
@@ -73,7 +74,7 @@ export class ErrorInterceptor implements HttpInterceptor {
             
             case 401:
 
-              this.toasts.error(error.statusText, error.status);
+              this.toastr.error(error.statusText === "OK" ? "Unauthorised" : error.statusText, error.status);
               break;
 
             case 404:
@@ -90,7 +91,7 @@ export class ErrorInterceptor implements HttpInterceptor {
             break;
 
             default:
-              this.toasts.error('Something unexpected went worng');
+              this.toastr.error('Something unexpected went worng');
               console.log(error);
               break;
             

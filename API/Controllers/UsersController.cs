@@ -72,7 +72,7 @@ namespace API.Controllers
 
              //   var users = await r_UserRepository.GetMembersAsync();
              //var users = await r_UserRepository.GetMembersAsync(userParams);//Use in UnitOfWork
-             var users = await r_UnitOfWork.UserRepository.GetMembersAsync(userParams);
+             var users = await r_UnitOfWork.UserRepository.GetMembersAsync(userParams);//Photo Challenge
 
              Response.AddPaginationHeader(users.CurrentPage, users.PageSize
                                     , users.TotalCount, users.TotalPages);
@@ -101,9 +101,9 @@ namespace API.Controllers
 
             ///Return the user by id , if is exists in database
             //return await r_UserRepository.GetUserByUsernameAsync(username);
-
+            var currentUsername = User.GetUsername();//Photo Challenge
             //return await r_UserRepository.GetMemberAsync(username);//Go and get the user 
-            return await r_UnitOfWork.UserRepository.GetMemberAsync(username);//Use in UnitOfWork
+            return await r_UnitOfWork.UserRepository.GetMemberAsync(username, isCurrentUser: currentUsername == username);//Use in UnitOfWork
             ///return r_Mapper.Map<//MemberDTOs>(user);//Search the user and convert him to memberDTO
             ///We return from GetMemberAsync now!
         }
@@ -170,11 +170,12 @@ namespace API.Controllers
             };
 
             //Checking if to member have pictures
-            if(user.Photos.Count == 0)
-            {
+            // if(user.Photos.Count == 0 )//&& user.Photos.First().IsApproved)//Photo Challenge
+            // {
 
-                photo.IsMain = true;//The photo is tje main now 
-            }
+            //     photo.IsMain = true;//The photo is tje main now 
+            
+            // }
 
             //Add photo
             user.Photos.Add(photo);
@@ -214,7 +215,7 @@ namespace API.Controllers
 
         }
 
-        var currentMainPhoto = user.Photos.FirstOrDefault(takeMainPhoto => takeMainPhoto.IsMain);//Take the main photo
+        var currentMainPhoto = user.Photos.FirstOrDefault(takeMainPhoto => takeMainPhoto.IsMain);// && takeMainPhoto.IsApproved == true);//Take the main photo, Photo Challenge
 
         if(currentMainPhoto != null)
         {
@@ -250,12 +251,12 @@ namespace API.Controllers
         //var user = await r_UserRepository.GetUserByUsernameAsync(User.GetUsername());//Use in UnitOfWork
 
         var user = await r_UnitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
-        var photo =  user.Photos.FirstOrDefault(pullPhoto => pullPhoto.Id == photoId);
+        var photo =  await r_UnitOfWork.PhotoRepository.GetPhotoById(photoId);
 
             if(photo == null)
             {
 
-                    return NotFound();
+                return NotFound();
 
             }
 
@@ -276,6 +277,7 @@ namespace API.Controllers
                 {
                     
                     return BadRequest(result.Error.Message);
+
                 }
 
             }
@@ -300,6 +302,6 @@ namespace API.Controllers
 
     }
 
-    }
+}
 
 }

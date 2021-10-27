@@ -31,6 +31,8 @@ namespace API.Data
 
         public DbSet<Connection> Connections { get; set; }
 
+        public DbSet<Photo> Photos { get; set; }//photo Challenge
+
         //Gives to entities some configuration, create relationships many to many
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -89,6 +91,8 @@ namespace API.Data
 
                 modelBuilder.ApplyUtcDateTimeConverter();//Convert to DateTime to DateTimeUtc
                 
+                 modelBuilder.Entity<Photo>()
+                .HasQueryFilter(photo => photo.IsApproved);
         }
         
     }

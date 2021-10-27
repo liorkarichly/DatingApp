@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using System.Linq;
 
 namespace API.Data
 {
@@ -63,7 +64,9 @@ namespace API.Data
             {
 
                     //using var hmac = new HMACSHA512();
+                    user.Photos.First().IsApproved = true;//Its take the first picture
                     user.UserName = user.UserName.ToLower();
+                 
                     //We have the identity role
                     // user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("PasswordDev"));
                     // user.PasswordSalt = hmac.Key;
@@ -71,9 +74,10 @@ namespace API.Data
                     //We didnt need to use in operator 'await' because when we 
                     //add to database so we need to track in through entity
                     //dataContext.Users.Add(user);
-                    await userManager.CreateAsync(user,  "Pa$$w0rd");
+                    //await userManager.CreateAsync(user,  "Pa$$w0rd");
                     await userManager.AddToRoleAsync(user, "Member");//We put the role of user in system
 
+           
             }
                 //The UserManager save about the changes 
                 //await dataContext.SaveChangesAsync();

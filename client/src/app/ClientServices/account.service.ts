@@ -42,9 +42,10 @@ currentUser$ = this.currentUserSource.asObservable(); //$ sign the object is obs
           // localStorage.setItem('user', JSON.stringify(user));
           //                     //key     //take object that back
           // this.currentUserSource.next(user);//Current user, how to set the next value 
-
+         
           this.setCurrentUser(user);
           this.presenceService.createHubConnection(user);
+          
         }
 
         //return user; for to print in consol 

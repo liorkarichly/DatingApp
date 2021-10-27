@@ -9,6 +9,8 @@ namespace API.DTOs
 
         public bool IsMain { get; set; }//Main photo or not
 
+        public bool IsApproved { get; set; } //Photo Challenge
+
     }
     
 }

@@ -23,6 +23,8 @@ namespace API.Data
 
         public ILikeRepository LikeRepository => new LikesRepository(r_DataContext);
 
+        public IPhotoRepository PhotoRepository => new PhotoRepository(r_DataContext);
+
         public async Task<bool> Complete()
         {
             
@@ -34,6 +36,9 @@ namespace API.Data
         {
             
             return r_DataContext.ChangeTracker.HasChanges();/* Save changes on tracker about every entites that found in tracker*/
+       
         }
+
     }
+    
 }

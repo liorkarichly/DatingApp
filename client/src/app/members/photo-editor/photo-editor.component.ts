@@ -124,7 +124,9 @@ export class PhotoEditorComponent implements OnInit {
     {
       //Filter of photos and return match ID photo
       this.member.photos = this.member.photos.filter(photoDeleted => photoDeleted.id != photoId);
-    })
+    
+    });
+    
   }
 
 }

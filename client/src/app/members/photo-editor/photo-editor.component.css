@@ -10,11 +10,33 @@ img img.thumbnail
 .nv-file-over
 {
 
-    border: dotted 3px red;
+    border: dotted 8px red;
 
 }
 
 input[type=file]
 {
     color: transparent;
+}
+
+.not-approved 
+{
+
+    opacity: 0.3;
+
+}
+
+.img-wrapper 
+{
+
+    position: relative
+
+}
+
+.img-text
+{
+
+    position: absolute;
+    bottom: 40%;
+
 }

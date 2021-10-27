@@ -26,16 +26,7 @@ namespace API.Data
             r_Context = i_Context;
 
         }
-
-        public async Task<MemberDTOs> GetMemberAsync(string username)
-        {
-
-            return await r_Context.Users.Where(//We show in termnial the property of AppUser
-                member => member.UserName == username)
-            .ProjectTo<MemberDTOs>(r_Mapper.ConfigurationProvider)//Set configuration file for to provide our alternative profile, we need to provider the our configuration that the mapper known to access    
-            .SingleOrDefaultAsync();//execute query
-
-        }
+       
 
         // public async Task<IEnumerable<MemberDTOs>> GetMembersAsync()
         // {
@@ -47,6 +38,29 @@ namespace API.Data
             
             
         // }
+
+         public async Task<MemberDTOs> GetMemberAsync(string username, bool? isCurrentUser)
+        {
+            // return await r_Context.Users.Where(//We show in termnial the property of AppUser
+            //     member => member.UserName == username)
+            // .ProjectTo<MemberDTOs>(r_Mapper.ConfigurationProvider)//Set configuration file for to provide our alternative profile, we need to provider the our configuration that the mapper known to access    
+            // .SingleOrDefaultAsync();//execute query
+
+            var query =  r_Context.Users.Where(//We show in termnial the property of AppUser
+                member => member.UserName == username)
+            .ProjectTo<MemberDTOs>(r_Mapper.ConfigurationProvider)//Set configuration file for to provide our alternative profile, we need to provider the our configuration that the mapper known to access    
+            .AsQueryable();//execute query
+
+            if(isCurrentUser.Value == true)
+            {
+
+                query = query.IgnoreQueryFilters();
+
+            }
+
+            return await query.FirstOrDefaultAsync();
+
+        }
 
         public async Task<PagedList<MemberDTOs>> GetMembersAsync(UserParams userParams)
         {
@@ -147,8 +161,19 @@ namespace API.Data
            return await r_Context.Users
                 .Where(user => user.UserName == username)
                 .Select(user => user.Gender)
-                .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync();
         
+        }
+
+        public async Task<AppUser> GetUserByPhotoId(int photoId)
+        {
+           
+           return await r_Context.Users
+            .Include(user => user.Photos)
+            .IgnoreQueryFilters()
+            .Where(user => user.Photos.Any(photo => photo.Id == photoId))
+            .FirstOrDefaultAsync();
+
         }
     }
 }

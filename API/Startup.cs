@@ -77,6 +77,15 @@ namespace API
             //Which isnt doing much for us at the moment because we haven't configured any authorization
             app.UseAuthorization();
 
+            /*
+            say app use default files, first of all.
+            And what this will do is if there's an index to age HTML inside there, then it's going to use that
+            */
+            app.UseDefaultFiles();
+
+            //Because the Angular service
+            app.UseStaticFiles();
+
             //We've got the middleware to actually use the endpoints and we've got a method
             //look inside to endpoints here to map the controllers
             app.UseEndpoints(endpoints =>
@@ -85,6 +94,7 @@ namespace API
                 endpoints.MapControllers();
                 endpoints.MapHub<PresenceHub>("hubs/presence");//President's hub going to be accessed from
                 endpoints.MapHub<MessageHub>("hubs/message");
+                endpoints.MapFallbackToController("Index", "Fallback");
                 
             });
 
