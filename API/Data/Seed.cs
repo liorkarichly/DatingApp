@@ -24,6 +24,12 @@ namespace API.Data
                 3. Role for Member
             */
             //if (await dataContext.Users.AnyAsync())
+
+            // Check for users in the database. The
+            // user manager has direct access to the database.
+            // So if there is entries in the database
+            // we will just return. In other words, was the
+            // database dropped and if so seed the thing
             if(await userManager.Users.AnyAsync())
             {
 
@@ -74,7 +80,7 @@ namespace API.Data
                     //We didnt need to use in operator 'await' because when we 
                     //add to database so we need to track in through entity
                     //dataContext.Users.Add(user);
-                    //await userManager.CreateAsync(user,  "Pa$$w0rd");
+                    await userManager.CreateAsync(user,  "Pa$$w0rd");
                     await userManager.AddToRoleAsync(user, "Member");//We put the role of user in system
 
            

@@ -6,6 +6,7 @@ using API.Services;
 using Microsoft.EntityFrameworkCore;
 using API.Helpers;
 using API.SignalR;
+using System;
 
 namespace API.Extensions
 {
@@ -32,11 +33,53 @@ namespace API.Extensions
             i_Services.AddDbContext<DataContext>(options => 
             {
 
-                options.UseSqlite(i_Config.GetConnectionString("DefaultConnection"));
+                //options.UseSqlite(i_Config.GetConnectionString("DefaultConnection"));We chabge the database
+                //options.UseNpgsql(i_Config.GetConnectionString("DefaultConnection"));
 
+                var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+                string connStr;
+
+                // Depending on if in development or production, use either Heroku-provided
+                // connection string, or development connection string from env var.
+                 if (environment == "Development")
+                {
+                
+                    // Use connection string from file.
+                    connStr = i_Config.GetConnectionString("DefaultConnection");
+
+                }
+                else
+                {
+
+                    // Use connection string provided at runtime by Heroku.
+                    var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+                         // Parse connection URL to connection string for Npgsql
+                         connUrl = connUrl.Replace("postgres://", string.Empty);
+                        var pgUserPass = connUrl.Split("@")[0];
+                        var pgHostPortDb = connUrl.Split("@")[1];
+                        var pgHostPort = pgHostPortDb.Split("/")[0];
+                        var pgDb = pgHostPortDb.Split("/")[1];
+                        var pgUser = pgUserPass.Split(":")[0];
+                        var pgPass = pgUserPass.Split(":")[1];
+                        var pgHost = pgHostPort.Split(":")[0];
+                        var pgPort = pgHostPort.Split(":")[1];
+
+                    connStr = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};SSL Mode=Require;TrustServerCertificate=True";
+   
+           
+                }
+
+                //options.UseNpgsql(i_Config.GetConnectionString("DefaultConnection")); 
+                
+                // Whether the connection string came from the local development configuration file
+                // or from the environment variable from Heroku, use it to set up your DbContext.
+               options.UseNpgsql(connStr);
+               
             });
 
-            return i_Services;
+        return i_Services;
 
         }
 
