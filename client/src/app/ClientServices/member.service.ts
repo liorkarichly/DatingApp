@@ -152,7 +152,6 @@ userParams:userParames;
       })
     )
      
-
   }
 
   setMainPhoto(photoId: number)
@@ -201,9 +200,11 @@ userParams:userParames;
 
   getLikes(predicate: string, pageNumber, pageSize)
   {
+
     let params = getPaginationHeaders(pageNumber, pageSize);
     params = params.append('predicate', predicate);
     //return this.http.get<Partial<Member[]>>(this.baseUrl + 'likes?predicate=' +  predicate);
     return getPaginatedResult<Partial<Member[]>>(this.baseUrl + 'likes', params, this.http);
   }
+
 }

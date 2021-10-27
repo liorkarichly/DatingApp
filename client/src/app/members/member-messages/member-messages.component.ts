@@ -15,6 +15,7 @@ export class MemberMessagesComponent implements OnInit {
   @Input()username: string;//We get username name that we click on them for get list of messages with him
   @Input ()messages:Message[];
   messageContent: string;
+  loading = false;
    
  
   constructor(public messageService:MessageService) { }
@@ -36,6 +37,7 @@ export class MemberMessagesComponent implements OnInit {
   sendMessage()
   {
 
+    this.loading = true;
     this.messageService.sendMessage(this.username, this.messageContent).then(
       message =>
       {
@@ -43,7 +45,8 @@ export class MemberMessagesComponent implements OnInit {
         //this.messages.push(message);
         this.messageForm.reset();
       
-      });
+      })
+      .finally(() => this.loading = false);
 
   }
 
